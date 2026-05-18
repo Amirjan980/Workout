@@ -13,7 +13,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
 .header-date { font-size: 12px; color: #8e8e93; }
 .header-streak { font-size: 12px; color: #ff9500; font-weight: 600; }
 .tabs { display: flex; background: #fff; border-bottom: 1px solid #e5e5ea; }
-.tab { flex: 1; padding: 10px; font-size: 13px; font-weight: 600; border: none; background: none; cursor: pointer; color: #8e8e93; border-bottom: 2px solid transparent; }
+.tab { flex: 1; padding: 10px 4px; font-size: 12px; font-weight: 600; border: none; background: none; cursor: pointer; color: #8e8e93; border-bottom: 2px solid transparent; }
 .tab.active { color: #007aff; border-bottom-color: #007aff; }
 .workout-header { padding: 12px 16px 0; }
 .workout-date-bar { border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; color: #fff; display: flex; align-items: center; justify-content: space-between; }
@@ -55,8 +55,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
 .set-done-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #c7c7cc; background: none; cursor: pointer; margin: 0 auto; font-size: 14px; color: transparent; display: block; }
 .set-done-btn.checked { background: #34c759; border-color: #34c759; color: #fff; }
 .add-set-btn { width: 100%; padding: 8px; border: 1.5px dashed #c7c7cc; border-radius: 8px; background: none; color: #007aff; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
-.orm-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: none; }
-.orm-box.visible { display: block; }
+.orm-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
 .orm-title { font-size: 11px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
 .orm-value { font-size: 28px; font-weight: 700; color: #fff; }
 .orm-label { font-size: 12px; color: #8e8e93; }
@@ -64,8 +63,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
 .orm-pct { background: rgba(255,255,255,0.08); border-radius: 8px; padding: 5px 8px; text-align: center; flex: 1; min-width: 48px; }
 .orm-pct-val { font-size: 14px; font-weight: 600; color: #fff; }
 .orm-pct-lbl { font-size: 10px; color: #8e8e93; margin-top: 1px; }
-.orm-record { font-size: 11px; color: #ff9500; margin-top: 8px; display: none; }
-.orm-record.visible { display: block; }
+.orm-record { font-size: 11px; color: #ff9500; margin-top: 8px; }
 .add-note { width: 100%; border: 1px solid #e5e5ea; border-radius: 8px; padding: 7px 10px; font-size: 13px; background: #f9f9f9; color: #1c1c1e; font-family: inherit; resize: none; }
 .add-note:focus { outline: none; border-color: #007aff; background: #fff; }
 .note-label { font-size: 11px; color: #8e8e93; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
@@ -89,6 +87,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
 .rest-options { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .rest-option { padding: 5px 10px; border: 1px solid #e5e5ea; border-radius: 20px; font-size: 12px; cursor: pointer; background: #f9f9f9; }
 .rest-option.selected { background: #007aff; color: #fff; border-color: #007aff; }
+
+/* ПРОГРЕСС */
+.progress-tab { padding: 16px; }
+.ex-selector { margin-bottom: 16px; }
+.ex-selector-label { font-size: 11px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+.ex-selector-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.ex-selector-scroll::-webkit-scrollbar { display: none; }
+.ex-pill { padding: 7px 14px; border: 1.5px solid #e5e5ea; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; background: #fff; color: #1c1c1e; flex-shrink: 0; }
+.ex-pill.active { background: #007aff; color: #fff; border-color: #007aff; }
+.period-btns { display: flex; gap: 6px; margin-bottom: 16px; }
+.period-btn { flex: 1; padding: 8px; border: 1.5px solid #e5e5ea; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; background: #fff; color: #8e8e93; }
+.period-btn.active { background: #007aff; color: #fff; border-color: #007aff; }
+.chart-card { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 12px; }
+.chart-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.chart-sub { font-size: 11px; color: #8e8e93; margin-bottom: 16px; }
+.chart-wrap { position: relative; height: 160px; }
+canvas { width: 100% !important; }
+.progress-stats { display: flex; gap: 8px; margin-bottom: 12px; }
+.progress-stat { flex: 1; background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); text-align: center; }
+.progress-stat-val { font-size: 20px; font-weight: 700; color: #007aff; }
+.progress-stat-val.green { color: #34c759; }
+.progress-stat-val.red { color: #ff3b30; }
+.progress-stat-lbl { font-size: 10px; color: #8e8e93; margin-top: 2px; text-transform: uppercase; }
+.history-list { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 32px; }
+.history-row { display: flex; align-items: center; padding: 10px 14px; border-bottom: 1px solid #f2f2f7; }
+.history-row:last-child { border-bottom: none; }
+.history-date { font-size: 12px; color: #8e8e93; width: 80px; flex-shrink: 0; }
+.history-weight { font-size: 15px; font-weight: 600; flex: 1; }
+.history-reps { font-size: 12px; color: #8e8e93; }
+.history-delta { font-size: 12px; font-weight: 600; margin-left: 8px; }
+.no-data { text-align: center; padding: 40px 20px; color: #8e8e93; font-size: 14px; }
+
+/* CALENDAR */
 .calendar-wrap { padding: 12px 16px; }
 .month-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .month-title { font-size: 16px; font-weight: 700; }
@@ -120,6 +151,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('workout')">Тренировка</button>
+  <button class="tab" onclick="switchTab('progress')">Прогресс</button>
   <button class="tab" onclick="switchTab('calendar')">Календарь</button>
 </div>
 
@@ -148,6 +180,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
   </div>
   <div class="ex-list" id="ex-list"></div>
   <button class="add-ex-btn" id="add-ex-btn" onclick="openModal()" style="display:none">+ Добавить упражнение</button>
+</div>
+
+<div id="tab-progress" style="display:none">
+  <div class="progress-tab">
+    <div class="ex-selector">
+      <div class="ex-selector-label">Упражнение</div>
+      <div class="ex-selector-scroll" id="ex-selector-scroll"></div>
+    </div>
+    <div class="period-btns">
+      <button class="period-btn active" onclick="setPeriod(14)">2 недели</button>
+      <button class="period-btn" onclick="setPeriod(30)">Месяц</button>
+      <button class="period-btn" onclick="setPeriod(90)">3 месяца</button>
+      <button class="period-btn" onclick="setPeriod(999)">Всё время</button>
+    </div>
+    <div class="progress-stats" id="progress-stats"></div>
+    <div class="chart-card">
+      <div class="chart-title" id="chart-title">График веса</div>
+      <div class="chart-sub" id="chart-sub"></div>
+      <div class="chart-wrap"><canvas id="myChart"></canvas></div>
+    </div>
+    <div style="font-size:12px;color:#8e8e93;margin-bottom:8px;font-weight:500;text-transform:uppercase;letter-spacing:0.3px">История</div>
+    <div class="history-list" id="history-list"></div>
+  </div>
 </div>
 
 <div id="tab-calendar" style="display:none">
@@ -180,7 +235,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #
     </div>
     <div class="modal-field">
       <div class="modal-label">Отдых между подходами</div>
-      <div class="rest-options" id="rest-options">
+      <div class="rest-options">
         <span class="rest-option" onclick="selectRest('30 сек',30)">30 сек</span>
         <span class="rest-option" onclick="selectRest('45-60 сек',52)">45-60 сек</span>
         <span class="rest-option selected" onclick="selectRest('1-1.5 мин',75)">1-1.5 мин</span>
@@ -234,6 +289,7 @@ var DAYS_DATA = [
   ]}
 ];
 
+var BENCH_PRESS_NAME = "Жим лёжа";
 var WORKOUT_DAYS=[1,3,5];
 var START_DATE=new Date(2026,4,18);
 function dateKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
@@ -243,10 +299,7 @@ var schedule={};
 function buildSchedule(){
   var d=new Date(START_DATE),idx=0,end=new Date(START_DATE);
   end.setMonth(end.getMonth()+6);
-  while(d<=end){
-    if(WORKOUT_DAYS.indexOf(d.getDay())!==-1){schedule[dateKey(d)]=idx%3;idx++;}
-    d.setDate(d.getDate()+1);
-  }
+  while(d<=end){if(WORKOUT_DAYS.indexOf(d.getDay())!==-1){schedule[dateKey(d)]=idx%3;idx++;}d.setDate(d.getDate()+1);}
 }
 buildSchedule();
 
@@ -258,12 +311,46 @@ function saveCustom(d){try{localStorage.setItem('custom_exercises',JSON.stringif
 function calc1RM(w,r){if(!w||!r||r<1)return 0;if(r===1)return w;return Math.round(w*(1+r/30));}
 
 function getDay(dk){
-  var dayType=schedule[dk];
-  if(dayType===undefined)return null;
-  var base=DAYS_DATA[dayType];
-  var custom=loadCustom()[dk]||[];
+  var dayType=schedule[dk];if(dayType===undefined)return null;
+  var base=DAYS_DATA[dayType];var custom=loadCustom()[dk]||[];
   if(custom.length===0)return base;
   return {type:base.type,exercises:base.exercises.concat(custom)};
+}
+
+// Получить все упражнения из всех тренировок
+function getAllExerciseNames(){
+  var names={};
+  for(var t=0;t<DAYS_DATA.length;t++){for(var e=0;e<DAYS_DATA[t].exercises.length;e++){names[DAYS_DATA[t].exercises[e].name]=1;}}
+  return Object.keys(names);
+}
+
+// Получить историю по упражнению
+function getExerciseHistory(exName, days){
+  var data=loadData();
+  var cutoff=new Date(today);cutoff.setDate(cutoff.getDate()-days);
+  var results=[];
+  var sortedKeys=Object.keys(schedule).sort();
+  for(var ki=0;ki<sortedKeys.length;ki++){
+    var dk=sortedKeys[ki];
+    var parts=dk.split('-');
+    var d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+    if(days<999&&d<cutoff)continue;
+    if(d>today)continue;
+    var wd=data[dk];if(!wd||!wd.exercises)continue;
+    var day=getDay(dk);if(!day)continue;
+    for(var ei=0;ei<day.exercises.length;ei++){
+      if(day.exercises[ei].name!==exName)continue;
+      var exData=wd.exercises['ex_'+ei];
+      if(!exData||!exData.sets)continue;
+      var bestW=0,bestR=0;
+      for(var s=0;s<exData.sets.length;s++){
+        var w=parseFloat(exData.sets[s].weight)||0,r=parseInt(exData.sets[s].reps)||0;
+        if(w>bestW){bestW=w;bestR=r;}
+      }
+      if(bestW>0)results.push({date:dk,d:d,weight:bestW,reps:bestR});
+    }
+  }
+  return results;
 }
 
 var today=new Date();today.setHours(0,0,0,0);
@@ -272,86 +359,193 @@ var openCards={};
 var timerInterval=null,timerSec=0,timerTotal=0,timerRunning=false;
 var calMonth=new Date(today.getFullYear(),today.getMonth(),1);
 var MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+var MONTHS_SHORT=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
 var DAYS_FULL=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
 var selectedRest={label:'1-1.5 мин',sec:75};
+var selectedExName=null;
+var selectedPeriod=14;
+var chartInstance=null;
 
 function openModal(){document.getElementById('modal-overlay').classList.add('open');document.getElementById('m-name').focus();}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.getElementById('m-name').value='';document.getElementById('m-sets').value='';document.getElementById('m-reps').value='';}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
-function selectRest(label,sec){
-  selectedRest={label:label,sec:sec};
-  document.querySelectorAll('.rest-option').forEach(function(el){el.classList.toggle('selected',el.textContent===label);});
-}
+function selectRest(label,sec){selectedRest={label:label,sec:sec};document.querySelectorAll('.rest-option').forEach(function(el){el.classList.toggle('selected',el.textContent===label);});}
 function saveNewExercise(){
   var name=document.getElementById('m-name').value.trim();
   var sets=parseInt(document.getElementById('m-sets').value)||3;
   var reps=document.getElementById('m-reps').value.trim()||'8-12';
   if(!name)return;
-  var dk=dateKey(selectedDate);
-  var custom=loadCustom();
-  if(!custom[dk])custom[dk]=[];
+  var dk=dateKey(selectedDate);var custom=loadCustom();if(!custom[dk])custom[dk]=[];
   custom[dk].push({name:name,sets:sets,reps:reps,rir:'',rest:selectedRest.label,restSec:selectedRest.sec,custom:true});
-  saveCustom(custom);
-  closeModal();
-  renderWorkout();
+  saveCustom(custom);closeModal();renderWorkout();
 }
 function deleteCustomEx(dk,idx){
-  var baseLen=DAYS_DATA[schedule[dk]].exercises.length;
-  var customIdx=idx-baseLen;
-  var custom=loadCustom();
-  if(custom[dk])custom[dk].splice(customIdx,1);
-  saveCustom(custom);
-  renderWorkout();
+  var baseLen=DAYS_DATA[schedule[dk]].exercises.length;var customIdx=idx-baseLen;
+  var custom=loadCustom();if(custom[dk])custom[dk].splice(customIdx,1);saveCustom(custom);renderWorkout();
 }
-
 function addSet(dk,i){
-  var data=loadData();
-  if(!data[dk])data[dk]={exercises:{},completed:false};
-  var exKey='ex_'+i;
-  if(!data[dk].exercises[exKey])return;
-  data[dk].exercises[exKey].sets.push({weight:'',reps:'',done:false});
-  saveData(data);
-  var day=getDay(dk);
-  var prevKey=getPrevWorkoutKey(dk,schedule[dk]);
-  var prevData=prevKey?(loadData()[prevKey]||null):null;
-  renderCard(i,dk,day,prevData);
+  var data=loadData();if(!data[dk])data[dk]={exercises:{},completed:false};
+  var exKey='ex_'+i;if(!data[dk].exercises[exKey])return;
+  data[dk].exercises[exKey].sets.push({weight:'',reps:'',done:false});saveData(data);
+  var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);
+  var prevData=prevKey?(loadData()[prevKey]||null):null;renderCard(i,dk,day,prevData);
 }
 
 function updateHeader(){
   var opts={weekday:'long',day:'numeric',month:'long'};
   document.getElementById('header-date').textContent=today.toLocaleDateString('ru-RU',opts);
   var data=loadData(),streak=0,d=new Date(today);
-  for(var i=0;i<200;i++){
-    var k=dateKey(d);
-    if(schedule[k]!==undefined){if(data[k]&&data[k].completed)streak++;else if(d<today)break;}
-    d.setDate(d.getDate()-1);
-  }
+  for(var i=0;i<200;i++){var k=dateKey(d);if(schedule[k]!==undefined){if(data[k]&&data[k].completed)streak++;else if(d<today)break;}d.setDate(d.getDate()-1);}
   document.getElementById('header-streak').textContent=streak>0?'🔥 '+streak+' подряд':'';
 }
 
 function switchTab(tab){
   document.getElementById('tab-workout').style.display=tab==='workout'?'':'none';
+  document.getElementById('tab-progress').style.display=tab==='progress'?'':'none';
   document.getElementById('tab-calendar').style.display=tab==='calendar'?'':'none';
-  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',(i===0&&tab==='workout')||(i===1&&tab==='calendar'));});
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',(i===0&&tab==='workout')||(i===1&&tab==='progress')||(i===2&&tab==='calendar'));});
   if(tab==='calendar')renderCalendar();
   if(tab==='workout')renderWorkout();
+  if(tab==='progress')renderProgress();
 }
 
+// ===== ПРОГРЕСС =====
+function setPeriod(days){
+  selectedPeriod=days;
+  document.querySelectorAll('.period-btn').forEach(function(b){
+    var d=parseInt(b.getAttribute('onclick').match(/\d+/)[0]);
+    b.classList.toggle('active',d===days||( days===999&&b.textContent==='Всё время'));
+  });
+  renderProgressChart();
+}
+
+function renderProgress(){
+  var names=getAllExerciseNames();
+  if(!selectedExName||names.indexOf(selectedExName)===-1)selectedExName=BENCH_PRESS_NAME;
+  var scroll=document.getElementById('ex-selector-scroll');
+  scroll.innerHTML='';
+  for(var i=0;i<names.length;i++){
+    var n=names[i];
+    var pill=document.createElement('span');
+    pill.className='ex-pill'+(n===selectedExName?' active':'');
+    pill.textContent=n;
+    pill.setAttribute('data-name',n);
+    pill.onclick=(function(name){return function(){selectedExName=name;document.querySelectorAll('.ex-pill').forEach(function(p){p.classList.toggle('active',p.getAttribute('data-name')===name);});renderProgressChart();};})(n);
+    scroll.appendChild(pill);
+  }
+  renderProgressChart();
+}
+
+function renderProgressChart(){
+  var history=getExerciseHistory(selectedExName,selectedPeriod);
+  var isBench=selectedExName===BENCH_PRESS_NAME;
+
+  // Stats
+  var statsEl=document.getElementById('progress-stats');
+  if(history.length===0){
+    statsEl.innerHTML='';
+    document.getElementById('chart-title').textContent=selectedExName;
+    document.getElementById('chart-sub').textContent='Нет данных за этот период';
+    document.getElementById('history-list').innerHTML='<div class="no-data">Данных пока нет.<br>Начни записывать веса на тренировках!</div>';
+    if(chartInstance){chartInstance=null;}
+    var ctx=document.getElementById('myChart').getContext('2d');ctx.clearRect(0,0,9999,9999);
+    return;
+  }
+
+  var best=0,first=history[0].weight,last=history[history.length-1].weight;
+  for(var i=0;i<history.length;i++)best=Math.max(best,history[i].weight);
+  var delta=last-first;
+  var deltaStr=(delta>=0?'+':'')+delta+' кг';
+  var deltaClass=delta>0?'green':delta<0?'red':'';
+
+  var statsHtml='<div class="progress-stat"><div class="progress-stat-val">'+best+' кг</div><div class="progress-stat-lbl">Лучший вес</div></div>'+
+    '<div class="progress-stat"><div class="progress-stat-val '+deltaClass+'">'+deltaStr+'</div><div class="progress-stat-lbl">Прирост</div></div>'+
+    '<div class="progress-stat"><div class="progress-stat-val">'+history.length+'</div><div class="progress-stat-lbl">Тренировок</div></div>';
+  if(isBench&&history.length>0){
+    var bestRM=calc1RM(best,history[history.length-1].reps||5);
+    statsHtml+='<div class="progress-stat"><div class="progress-stat-val" style="color:#ff9500">'+bestRM+' кг</div><div class="progress-stat-lbl">1RM (Эпли)</div></div>';
+  }
+  statsEl.innerHTML=statsHtml;
+
+  document.getElementById('chart-title').textContent=selectedExName;
+  document.getElementById('chart-sub').textContent='Максимальный вес за тренировку';
+
+  // Chart
+  var labels=history.map(function(h){var d=h.d;return d.getDate()+' '+MONTHS_SHORT[d.getMonth()];});
+  var weights=history.map(function(h){return h.weight;});
+
+  var canvas=document.getElementById('myChart');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.offsetWidth||300,H=160;
+  canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
+
+  ctx.clearRect(0,0,W,H);
+  var pad2=20,padB=28,padT=10;
+  var chartW=W-pad2*2,chartH=H-padB-padT;
+  var minW=Math.min.apply(null,weights),maxW=Math.max.apply(null,weights);
+  if(minW===maxW){minW=minW-5;maxW=maxW+5;}
+  var range=maxW-minW;
+
+  function xPos(i){return pad2+i*(chartW/(weights.length-1||1));}
+  function yPos(w){return padT+chartH-(w-minW)/range*chartH;}
+
+  // Grid
+  ctx.strokeStyle='#f0f0f0';ctx.lineWidth=1;
+  for(var g=0;g<=4;g++){var y=padT+g*(chartH/4);ctx.beginPath();ctx.moveTo(pad2,y);ctx.lineTo(W-pad2,y);ctx.stroke();}
+
+  // Area
+  if(weights.length>1){
+    var grad=ctx.createLinearGradient(0,padT,0,padT+chartH);
+    grad.addColorStop(0,'rgba(0,122,255,0.25)');grad.addColorStop(1,'rgba(0,122,255,0)');
+    ctx.beginPath();ctx.moveTo(xPos(0),yPos(weights[0]));
+    for(var i=1;i<weights.length;i++)ctx.lineTo(xPos(i),yPos(weights[i]));
+    ctx.lineTo(xPos(weights.length-1),padT+chartH);ctx.lineTo(xPos(0),padT+chartH);ctx.closePath();
+    ctx.fillStyle=grad;ctx.fill();
+  }
+
+  // Line
+  ctx.beginPath();ctx.strokeStyle='#007aff';ctx.lineWidth=2.5;ctx.lineJoin='round';
+  for(var i=0;i<weights.length;i++){if(i===0)ctx.moveTo(xPos(i),yPos(weights[i]));else ctx.lineTo(xPos(i),yPos(weights[i]));}
+  ctx.stroke();
+
+  // Dots & labels
+  for(var i=0;i<weights.length;i++){
+    ctx.beginPath();ctx.arc(xPos(i),yPos(weights[i]),4,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#007aff';ctx.lineWidth=2;ctx.stroke();
+    // Weight label
+    ctx.fillStyle='#1c1c1e';ctx.font='bold 10px -apple-system,sans-serif';ctx.textAlign='center';
+    ctx.fillText(weights[i]+'кг',xPos(i),yPos(weights[i])-8);
+  }
+
+  // X labels (показываем не все если много)
+  var step=Math.ceil(labels.length/5);
+  ctx.fillStyle='#8e8e93';ctx.font='10px -apple-system,sans-serif';ctx.textAlign='center';
+  for(var i=0;i<labels.length;i+=step)ctx.fillText(labels[i],xPos(i),H-10);
+
+  // History list
+  var hHtml='';
+  for(var i=history.length-1;i>=0;i--){
+    var h=history[i];
+    var prev=i>0?history[i-1].weight:null;
+    var delta2=prev!==null?h.weight-prev:null;
+    var deltaEl=delta2!==null?'<span class="history-delta" style="color:'+(delta2>0?'#34c759':delta2<0?'#ff3b30':'#8e8e93')+'">'+(delta2>0?'+':'')+delta2+' кг</span>':'';
+    var dateStr=h.d.getDate()+' '+MONTHS_SHORT[h.d.getMonth()];
+    hHtml+='<div class="history-row"><span class="history-date">'+dateStr+'</span><span class="history-weight">'+h.weight+' кг</span><span class="history-reps">'+h.reps+' повт.</span>'+deltaEl+'</div>';
+  }
+  document.getElementById('history-list').innerHTML=hHtml||'<div class="no-data">Нет данных</div>';
+}
+
+// ===== WORKOUT =====
 function getPrevWorkoutKey(dk,dayType){
   var keys=Object.keys(schedule).sort(),found=false;
-  for(var i=keys.length-1;i>=0;i--){
-    if(keys[i]===dk){found=true;continue;}
-    if(found&&schedule[keys[i]]===dayType)return keys[i];
-  }
+  for(var i=keys.length-1;i>=0;i--){if(keys[i]===dk){found=true;continue;}if(found&&schedule[keys[i]]===dayType)return keys[i];}
   return null;
 }
 
 function renderWorkout(){
-  var dk=dateKey(selectedDate);
-  var dayType=schedule[dk];
+  var dk=dateKey(selectedDate);var dayType=schedule[dk];
   var isToday=dk===dateKey(today),isPast=selectedDate<today;
-  var dayName=DAYS_FULL[selectedDate.getDay()];
-  dayName=dayName.charAt(0).toUpperCase()+dayName.slice(1);
+  var dayName=DAYS_FULL[selectedDate.getDay()];dayName=dayName.charAt(0).toUpperCase()+dayName.slice(1);
   var dateStr=selectedDate.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('workout-date-label').textContent=isToday?'Сегодня':(isPast?'Прошлая тренировка':'Запланировано');
   document.getElementById('workout-date-val').textContent=dayName+', '+dateStr;
@@ -361,97 +555,59 @@ function renderWorkout(){
     document.getElementById('workout-date-bar').style.background='#8e8e93';
     document.getElementById('prev-hint').style.display='none';
     document.getElementById('ex-list').innerHTML='<div class="empty-day"><div class="emoji">😴</div><p>День отдыха.<br>Следующая тренировка скоро!</p></div>';
-    document.getElementById('done-count').textContent='-';
-    document.getElementById('total-count').textContent='-';
-    document.getElementById('pct').textContent='-';
-    document.getElementById('progress-fill').style.width='0%';
-    document.getElementById('add-ex-btn').style.display='none';
-    return;
+    document.getElementById('done-count').textContent='-';document.getElementById('total-count').textContent='-';
+    document.getElementById('pct').textContent='-';document.getElementById('progress-fill').style.width='0%';
+    document.getElementById('add-ex-btn').style.display='none';return;
   }
 
   var day=getDay(dk);
   document.getElementById('workout-type').textContent='Тренировка '+day.type;
   document.getElementById('workout-date-bar').style.background=dayType===0?'#007aff':dayType===1?'#34c759':'#ff9500';
   document.getElementById('add-ex-btn').style.display='flex';
-
-  var prevKey=getPrevWorkoutKey(dk,dayType);
-  var data=loadData();
+  var prevKey=getPrevWorkoutKey(dk,dayType);var data=loadData();
   var prevData=prevKey?(data[prevKey]||null):null;
   document.getElementById('prev-hint').style.display=prevData?'block':'none';
-
   updateStats(dk,day);
-  var html='';
-  for(var i=0;i<day.exercises.length;i++)html+='<div class="ex-card" id="card-'+i+'"></div>';
+  var html='';for(var i=0;i<day.exercises.length;i++)html+='<div class="ex-card" id="card-'+i+'"></div>';
   document.getElementById('ex-list').innerHTML=html;
   for(var i=0;i<day.exercises.length;i++)renderCard(i,dk,day,prevData);
 }
 
 function renderCard(i,dk,day,prevData){
-  var card=document.getElementById('card-'+i);
-  if(!card)return;
-  var ex=day.exercises[i];
-  var data=loadData();
-  if(!data[dk])data[dk]={exercises:{},completed:false};
-  if(!data[dk].exercises)data[dk].exercises={};
+  var card=document.getElementById('card-'+i);if(!card)return;
+  var ex=day.exercises[i];var data=loadData();
+  if(!data[dk])data[dk]={exercises:{},completed:false};if(!data[dk].exercises)data[dk].exercises={};
   var exKey='ex_'+i;
-  if(!data[dk].exercises[exKey]){
-    var sets=[];
-    for(var s=0;s<ex.sets;s++)sets.push({weight:'',reps:'',done:false});
-    data[dk].exercises[exKey]={sets:sets,note:'',done:false};
-    saveData(data);
-  }
+  if(!data[dk].exercises[exKey]){var sets=[];for(var s=0;s<ex.sets;s++)sets.push({weight:'',reps:'',done:false});data[dk].exercises[exKey]={sets:sets,note:'',done:false};saveData(data);}
   var exData=data[dk].exercises[exKey];
   var isOpen=!!openCards[dk+'_'+i],isDone=exData.done;
   var prevExData=prevData&&prevData.exercises&&prevData.exercises[exKey]?prevData.exercises[exKey]:null;
-  var baseLen=DAYS_DATA[schedule[dk]].exercises.length;
-  var isCustom=i>=baseLen;
+  var baseLen=DAYS_DATA[schedule[dk]].exercises.length;var isCustom=i>=baseLen;
+  var isBench=ex.name===BENCH_PRESS_NAME;
 
   var best1RM=0,bestW=0,bestR=0;
-  for(var s=0;s<exData.sets.length;s++){
-    var w=parseFloat(exData.sets[s].weight)||0,r=parseInt(exData.sets[s].reps)||0;
-    if(w&&r){var rm=calc1RM(w,r);if(rm>best1RM){best1RM=rm;bestW=w;bestR=r;}}
-  }
+  for(var s=0;s<exData.sets.length;s++){var w=parseFloat(exData.sets[s].weight)||0,r=parseInt(exData.sets[s].reps)||0;if(w&&r){var rm=calc1RM(w,r);if(rm>best1RM){best1RM=rm;bestW=w;bestR=r;}}}
 
   var prevLine='';
-  if(prevExData){
-    var bw=0;
-    for(var s=0;s<prevExData.sets.length;s++)if(prevExData.sets[s].weight)bw=Math.max(bw,parseFloat(prevExData.sets[s].weight)||0);
-    if(bw>0)prevLine='<div class="ex-prev">Прошлый раз: '+bw+' кг</div>';
-  }
+  if(prevExData){var bw=0;for(var s=0;s<prevExData.sets.length;s++)if(prevExData.sets[s].weight)bw=Math.max(bw,parseFloat(prevExData.sets[s].weight)||0);if(bw>0)prevLine='<div class="ex-prev">Прошлый раз: '+bw+' кг</div>';}
 
   card.className='ex-card'+(isDone?' done':'')+(isOpen?' open':'');
 
   var setsHtml='<table class="sets-table"><thead><tr><th>#</th><th>Вес (кг)</th><th>Повт.</th><th>&#10003;</th></tr></thead><tbody>';
   for(var s=0;s<exData.sets.length;s++){
-    var set=exData.sets[s];
-    var prevSet=prevExData&&prevExData.sets[s]?prevExData.sets[s]:null;
-    var wPh=prevSet&&prevSet.weight?prevSet.weight:'-';
-    var rPh=prevSet&&prevSet.reps?prevSet.reps:ex.reps;
-    var hasPrevW=prevSet&&prevSet.weight?' has-prev':'';
-    var hasPrevR=prevSet&&prevSet.reps?' has-prev':'';
-    setsHtml+='<tr>';
-    setsHtml+='<td class="set-num">'+(s+1)+'</td>';
+    var set=exData.sets[s];var prevSet=prevExData&&prevExData.sets[s]?prevExData.sets[s]:null;
+    var wPh=prevSet&&prevSet.weight?prevSet.weight:'-',rPh=prevSet&&prevSet.reps?prevSet.reps:ex.reps;
+    var hasPrevW=prevSet&&prevSet.weight?' has-prev':'',hasPrevR=prevSet&&prevSet.reps?' has-prev':'';
+    setsHtml+='<tr><td class="set-num">'+(s+1)+'</td>';
     setsHtml+='<td><input class="set-input'+hasPrevW+'" type="number" inputmode="decimal" placeholder="'+wPh+'" value="'+(set.weight||'')+'" onchange="saveField(\''+dk+'\','+i+','+s+',\'weight\',this.value)" onclick="event.stopPropagation()"></td>';
     setsHtml+='<td><input class="set-input'+hasPrevR+'" type="text" inputmode="numeric" placeholder="'+rPh+'" value="'+(set.reps||'')+'" onchange="saveField(\''+dk+'\','+i+','+s+',\'reps\',this.value)" onclick="event.stopPropagation()"></td>';
-    setsHtml+='<td><button class="set-done-btn'+(set.done?' checked':'')+'" onclick="event.stopPropagation();toggleSetDone(\''+dk+'\','+i+','+s+')">&#10003;</button></td>';
-    setsHtml+='</tr>';
+    setsHtml+='<td><button class="set-done-btn'+(set.done?' checked':'')+'" onclick="event.stopPropagation();toggleSetDone(\''+dk+'\','+i+','+s+')">&#10003;</button></td></tr>';
   }
-  setsHtml+='</tbody></table>';
-  setsHtml+='<button class="add-set-btn" onclick="event.stopPropagation();addSet(\''+dk+'\','+i+')">+ Добавить подход</button>';
+  setsHtml+='</tbody></table><button class="add-set-btn" onclick="event.stopPropagation();addSet(\''+dk+'\','+i+')">+ Добавить подход</button>';
 
   var ormHtml='';
-  if(best1RM>0){
-    ormHtml='<div class="orm-box visible">'+
-      '<div class="orm-title">Расчётный максимум (1RM) · формула Эпли</div>'+
-      '<div class="orm-value">'+best1RM+' кг</div>'+
-      '<div class="orm-label">'+bestW+' кг × '+bestR+' повт.</div>'+
-      '<div class="orm-pcts">'+
-        '<div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.9)+' кг</div><div class="orm-pct-lbl">90%</div></div>'+
-        '<div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.8)+' кг</div><div class="orm-pct-lbl">80%</div></div>'+
-        '<div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.7)+' кг</div><div class="orm-pct-lbl">70%</div></div>'+
-        '<div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.6)+' кг</div><div class="orm-pct-lbl">60%</div></div>'+
-      '</div>'+
-    '</div>';
+  if(isBench&&best1RM>0){
+    ormHtml='<div class="orm-box"><div class="orm-title">Расчётный максимум (1RM) · формула Эпли</div><div class="orm-value">'+best1RM+' кг</div><div class="orm-label">'+bestW+' кг × '+bestR+' повт.</div><div class="orm-pcts"><div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.9)+' кг</div><div class="orm-pct-lbl">90%</div></div><div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.8)+' кг</div><div class="orm-pct-lbl">80%</div></div><div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.7)+' кг</div><div class="orm-pct-lbl">70%</div></div><div class="orm-pct"><div class="orm-pct-val">'+Math.round(best1RM*0.6)+' кг</div><div class="orm-pct-lbl">60%</div></div></div><div class="orm-record" style="display:'+(best1RM>0?'block':'none')+'">🏆 Твой расчётный максимум на сегодня</div></div>';
   }
 
   var deleteBtn=isCustom?'<button class="delete-ex-btn" onclick="event.stopPropagation();deleteCustomEx(\''+dk+'\','+i+')">🗑 Удалить</button>':'';
@@ -459,23 +615,14 @@ function renderCard(i,dk,day,prevData){
   card.innerHTML=
     '<div class="ex-header" onclick="toggleCard(\''+dk+'\','+i+')">' +
       '<div class="ex-check">'+(isDone?'&#10003;':'')+'</div>'+
-      '<div class="ex-title">'+
-        '<div class="ex-name">'+ex.name+(isCustom?' <span style="font-size:10px;color:#8e8e93;font-weight:400">моё</span>':'')+'</div>'+
-        '<div class="ex-meta">'+ex.sets+'x'+ex.reps+(ex.rir?' · '+ex.rir:'')+'</div>'+
-        prevLine+
-      '</div>'+
+      '<div class="ex-title"><div class="ex-name">'+ex.name+(isCustom?' <span style="font-size:10px;color:#8e8e93;font-weight:400">моё</span>':'')+'</div><div class="ex-meta">'+ex.sets+'x'+ex.reps+(ex.rir?' · '+ex.rir:'')+'</div>'+prevLine+'</div>'+
       '<button class="rest-btn" onclick="event.stopPropagation();startRest('+ex.restSec+',\''+ex.rest+'\')">&#9201; '+ex.rest+'</button>'+
     '</div>'+
-    '<div class="ex-body">'+
-      setsHtml+
-      ormHtml+
+    '<div class="ex-body">'+setsHtml+ormHtml+
       '<div class="note-label" style="margin-top:8px">Заметка</div>'+
       '<textarea class="add-note" rows="2" placeholder="Комментарий..." onclick="event.stopPropagation()" onchange="saveNote(\''+dk+'\','+i+',this.value)">'+(exData.note||'')+'</textarea>'+
-      '<div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">'+
-        deleteBtn+
-        '<button class="done-btn" onclick="event.stopPropagation();toggleExDone(\''+dk+'\','+i+')" style="background:'+(isDone?'#ff3b30':'#34c759')+'">'+(isDone?'Снять отметку':'Готово')+'</button>'+
-      '</div>'+
-    '</div>';
+      '<div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">'+deleteBtn+
+      '<button class="done-btn" onclick="event.stopPropagation();toggleExDone(\''+dk+'\','+i+')" style="background:'+(isDone?'#ff3b30':'#34c759')+'">'+(isDone?'Снять отметку':'Готово')+'</button></div></div>';
 }
 
 function toggleCard(dk,i){openCards[dk+'_'+i]=!openCards[dk+'_'+i];var day=getDay(dk);var data=loadData();var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(i,dk,day,prevData);}
@@ -501,9 +648,8 @@ function renderCalendar(){
   var daysInMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,0).getDate();
   for(var day=1;day<=daysInMonth;day++){
     var d=new Date(calMonth.getFullYear(),calMonth.getMonth(),day),dk=dateKey(d);
-    var isToday2=dk===dateKey(today),isPast2=d<today;
-    var isWorkout=schedule[dk]!==undefined,isDone2=data[dk]&&data[dk].completed;
-    var isSelected=dk===dateKey(selectedDate);
+    var isToday2=dk===dateKey(today),isPast2=d<today,isWorkout=schedule[dk]!==undefined;
+    var isDone2=data[dk]&&data[dk].completed,isSelected=dk===dateKey(selectedDate);
     var cls='cal-day';
     if(isWorkout)cls+=isDone2?' done':' workout';
     if(isToday2)cls+=' today';
