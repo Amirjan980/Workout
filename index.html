@@ -183,11 +183,20 @@ body.dark .reset-btn { background: #2c2c2e; color: var(--text2); }
 <div class="header">
   <div style="display:flex;align-items:center;justify-content:space-between">
     <h1>План тренировок</h1>
-    <div style="display:flex;gap:6px">
-      <button onclick="exportData()" style="background:var(--bg4);border:none;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--blue);cursor:pointer">💾 Сохранить</button>
-      <button onclick="document.getElementById('import-input').click()" style="background:var(--bg4);border:none;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--green);cursor:pointer">📂 Загрузить</button>
-      <button id="theme-btn" onclick="toggleTheme()" style="background:var(--bg4);border:none;border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer">🌙</button>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button onclick="exportData()" style="background:var(--bg4);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--blue);font-size:12px;font-weight:600">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Сохранить
+      </button>
+      <button onclick="document.getElementById('import-input').click()" style="background:var(--bg4);border:none;border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;color:var(--green);font-size:12px;font-weight:600">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Загрузить
+      </button>
       <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
+      <button id="theme-btn" onclick="toggleTheme()" style="background:var(--bg4);border:none;border-radius:10px;padding:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)">
+        <svg id="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
     </div>
   </div>
   <div class="header-sub">
@@ -845,7 +854,12 @@ function nextMonth(){calMonth.setMonth(calMonth.getMonth()+1);renderCalendar();}
 
 // Тёмная тема
 var isDark=localStorage.getItem('dark_mode')==='1';
-function applyTheme(){document.body.classList.toggle('dark',isDark);document.getElementById('theme-btn').textContent=isDark?'☀️':'🌙';}
+function applyTheme(){
+  document.body.classList.toggle('dark',isDark);
+  var moon=document.getElementById('theme-icon-moon');
+  var sun=document.getElementById('theme-icon-sun');
+  if(moon&&sun){moon.style.display=isDark?'none':'block';sun.style.display=isDark?'block':'none';}
+}
 function toggleTheme(){isDark=!isDark;localStorage.setItem('dark_mode',isDark?'1':'0');applyTheme();}
 applyTheme();
 
