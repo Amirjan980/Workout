@@ -138,11 +138,21 @@ canvas { width: 100% !important; }
 .empty-day { text-align: center; padding: 60px 20px; color: #8e8e93; }
 .empty-day .emoji { font-size: 48px; margin-bottom: 12px; }
 </style>
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="0">
 </head>
 <body>
 
 <div class="header">
-  <h1>План тренировок</h1>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <h1>План тренировок</h1>
+    <div style="display:flex;gap:6px">
+      <button onclick="exportData()" style="background:#f2f2f7;border:none;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#007aff;cursor:pointer">💾 Сохранить</button>
+      <button onclick="document.getElementById('import-input').click()" style="background:#f2f2f7;border:none;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600;color:#34c759;cursor:pointer">📂 Загрузить</button>
+      <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+  </div>
   <div class="header-sub">
     <span class="header-date" id="header-date"></span>
     <span class="header-streak" id="header-streak"></span>
@@ -362,7 +372,32 @@ function getExerciseHistory(exName, days){
 var today=new Date();today.setHours(0,0,0,0);
 var selectedDate=new Date(today);
 var openCards={};
-var timerInterval=null,timerSec=0,timerTotal=0,timerRunning=false;
+var timerInterval=null,timerSec=0,timerTotal=0,timerRunning=false,timerEndTime=null;
+
+// Будим AudioContext при возвращении на страницу
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'){
+    // Будим звук
+    if(window._ac&&window._ac.state==='suspended')window._ac.resume();
+    // Досчитываем таймер
+    if(timerRunning&&timerEndTime){
+      var now=Date.now();
+      var remaining=Math.round((timerEndTime-now)/1000);
+      if(remaining<=0){
+        timerSec=0;
+        clearInterval(timerInterval);
+        timerRunning=false;
+        document.getElementById('timer-btn').innerHTML='&#9654;';
+        updateTimerDisplay();
+        playDone();
+        showTimerNotification();
+      } else {
+        timerSec=remaining;
+        updateTimerDisplay();
+      }
+    }
+  }
+});
 var calMonth=new Date(today.getFullYear(),today.getMonth(),1);
 var MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 var MONTHS_SHORT=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
@@ -637,10 +672,44 @@ function saveNote(dk,exIdx,val){var data=loadData();data[dk].exercises['ex_'+exI
 function toggleSetDone(dk,exIdx,setIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].sets[setIdx].done=!data[dk].exercises['ex_'+exIdx].sets[setIdx].done;saveData(data);var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);}
 function toggleExDone(dk,exIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].done=!data[dk].exercises['ex_'+exIdx].done;var day=getDay(dk);var allDone=true;for(var i=0;i<day.exercises.length;i++){var k='ex_'+i;if(!data[dk].exercises[k]||!data[dk].exercises[k].done){allDone=false;break;}}data[dk].completed=allDone;saveData(data);updateStats(dk,day);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);updateHeader();}
 function updateStats(dk,day){var data=loadData(),wData=data[dk]||{exercises:{}},total=day.exercises.length,doneCount=0;for(var i=0;i<total;i++){var k='ex_'+i;if(wData.exercises&&wData.exercises[k]&&wData.exercises[k].done)doneCount++;}var pct=total?Math.round(doneCount/total*100):0;document.getElementById('done-count').textContent=doneCount;document.getElementById('total-count').textContent=total;document.getElementById('pct').textContent=pct+'%';document.getElementById('progress-fill').style.width=pct+'%';}
-function startRest(sec,label){unlockAudio();requestNotifications();clearInterval(timerInterval);timerTotal=sec;timerSec=sec;timerRunning=false;document.getElementById('timer-label').textContent=label;document.getElementById('timer-box').style.display='flex';updateTimerDisplay();startTimer();}
-function startTimer(){timerRunning=true;document.getElementById('timer-btn').innerHTML='&#9646;&#9646;';timerInterval=setInterval(function(){if(timerSec<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-btn').innerHTML='&#9654;';playDone();return;}timerSec--;if(timerSec<=10&&timerSec>0)playTick();updateTimerDisplay();},1000);}
-function toggleTimer(){if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-btn').innerHTML='&#9654;';}else startTimer();}
-function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerSec=timerTotal;document.getElementById('timer-btn').innerHTML='&#9654;';updateTimerDisplay();}
+function startRest(sec,label){
+  unlockAudio();requestNotifications();
+  clearInterval(timerInterval);
+  timerTotal=sec;timerSec=sec;timerRunning=false;
+  timerEndTime=null;
+  document.getElementById('timer-label').textContent=label;
+  document.getElementById('timer-box').style.display='flex';
+  updateTimerDisplay();startTimer();
+  // Планируем уведомление заранее
+  scheduleNotification(sec,label);
+}
+function startTimer(){
+  timerRunning=true;
+  timerEndTime=Date.now()+timerSec*1000;
+  document.getElementById('timer-btn').innerHTML='&#9646;&#9646;';
+  timerInterval=setInterval(function(){
+    if(!timerRunning)return;
+    var remaining=Math.round((timerEndTime-Date.now())/1000);
+    if(remaining<=0){
+      timerSec=0;clearInterval(timerInterval);timerRunning=false;
+      document.getElementById('timer-btn').innerHTML='&#9654;';
+      updateTimerDisplay();playDone();return;
+    }
+    timerSec=remaining;
+    if(timerSec<=10&&timerSec>0)playTick();
+    updateTimerDisplay();
+  },1000);
+}
+function toggleTimer(){
+  if(timerRunning){
+    clearInterval(timerInterval);timerRunning=false;timerEndTime=null;
+    document.getElementById('timer-btn').innerHTML='&#9654;';
+  }else{startTimer();}
+}
+function resetTimer(){
+  clearInterval(timerInterval);timerRunning=false;timerSec=timerTotal;timerEndTime=null;
+  document.getElementById('timer-btn').innerHTML='&#9654;';updateTimerDisplay();
+}
 function getAC(){
   if(!window._ac){
     try{window._ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}
@@ -662,8 +731,18 @@ function showTimerNotification(){
   try{
     if(typeof Notification==='undefined')return;
     if(Notification.permission==='granted'){
-      new Notification('Отдых окончен! 💪',{body:'Время следующего подхода',icon:'',tag:'workout-timer'});
+      new Notification('Отдых окончен! 💪',{body:'Время следующего подхода',tag:'workout-timer'});
     }
+  }catch(e){}
+}
+var notifTimeout=null;
+function scheduleNotification(sec,label){
+  try{
+    if(notifTimeout)clearTimeout(notifTimeout);
+    if(typeof Notification==='undefined'||Notification.permission!=='granted')return;
+    notifTimeout=setTimeout(function(){
+      new Notification('Отдых окончен! 💪',{body:label+' — время следующего подхода',tag:'workout-timer'});
+    },sec*1000);
   }catch(e){}
 }
 function requestNotifications(){
@@ -703,6 +782,38 @@ function nextMonth(){calMonth.setMonth(calMonth.getMonth()+1);renderCalendar();}
 
 updateHeader();
 renderWorkout();
+
+function exportData(){
+  try{
+    var data={workout_data:loadData(),custom_exercises:loadCustom(),exported:new Date().toISOString()};
+    var json=JSON.stringify(data,null,2);
+    var blob=new Blob([json],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='workout_backup_'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }catch(e){alert('Ошибка экспорта: '+e.message);}
+}
+
+function importData(event){
+  var file=event.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(data.workout_data)saveData(data.workout_data);
+      if(data.custom_exercises)saveCustom(data.custom_exercises);
+      alert('✅ Данные загружены! Тренировки восстановлены.');
+      renderWorkout();
+      updateHeader();
+    }catch(err){alert('Ошибка загрузки файла. Убедись что это правильный файл бэкапа.');}
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
 </script>
 </body>
 </html>
