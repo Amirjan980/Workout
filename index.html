@@ -725,11 +725,14 @@ function startTimer(){
 function toggleTimer(){
   if(timerRunning){
     clearInterval(timerInterval);timerRunning=false;timerEndTime=null;
+    cancelNotification();
+    document.getElementById('timer-btn').innerHTML='&#9646;&#9646;'.replace('&#9646;&#9646;','&#9654;');
     document.getElementById('timer-btn').innerHTML='&#9654;';
   }else{startTimer();}
 }
 function resetTimer(){
   clearInterval(timerInterval);timerRunning=false;timerSec=timerTotal;timerEndTime=null;
+  cancelNotification();
   document.getElementById('timer-btn').innerHTML='&#9654;';updateTimerDisplay();
 }
 function getAC(){
@@ -737,37 +740,31 @@ function getAC(){
     if(!window._ac||window._ac.state==='closed'){
       window._ac=new(window.AudioContext||window.webkitAudioContext)();
     }
-    if(window._ac.state==='suspended'){
-      window._ac.resume();
-    }
     return window._ac;
   }catch(e){return null;}
 }
 function unlockAudio(){
   try{
-    if(!window._ac||window._ac.state==='closed'){
-      window._ac=new(window.AudioContext||window.webkitAudioContext)();
+    var ac=getAC();
+    if(!ac)return;
+    if(ac.state==='suspended'){
+      ac.resume();
     }
-    if(window._ac.state==='suspended'){
-      window._ac.resume().then(function(){
-        // Играем тихий звук чтобы разблокировать
-        var ac=window._ac;
-        var o=ac.createOscillator();var g=ac.createGain();
-        o.connect(g);g.connect(ac.destination);
-        g.gain.setValueAtTime(0.001,ac.currentTime);
-        o.start(ac.currentTime);o.stop(ac.currentTime+0.01);
-      });
-    }
+    // Играем беззвучный буфер чтобы разблокировать
+    var buf=ac.createBuffer(1,1,22050);
+    var src=ac.createBufferSource();
+    src.buffer=buf;src.connect(ac.destination);src.start(0);
   }catch(e){}
 }
 document.addEventListener('touchstart',unlockAudio,{passive:true});
 document.addEventListener('click',unlockAudio);
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
-    // Пересоздаём AudioContext после блокировки
+    // Пересоздаём AudioContext после блокировки экрана
     try{
-      if(window._ac&&(window._ac.state==='suspended'||window._ac.state==='closed')){
-        window._ac=new(window.AudioContext||window.webkitAudioContext)();
+      if(window._ac){
+        if(window._ac.state==='suspended'){window._ac.resume();}
+        else if(window._ac.state==='closed'){window._ac=new(window.AudioContext||window.webkitAudioContext)();}
       }
     }catch(e){}
     // Досчитываем таймер
@@ -777,28 +774,56 @@ document.addEventListener('visibilitychange',function(){
       if(remaining<=0){
         timerSec=0;clearInterval(timerInterval);timerRunning=false;
         document.getElementById('timer-btn').innerHTML='&#9654;';
-        updateTimerDisplay();playDone();
+        updateTimerDisplay();
+        setTimeout(function(){playDone();},300); // небольшая задержка чтобы AC успел проснуться
       } else {
         timerSec=remaining;updateTimerDisplay();
       }
     }
   }
 });
-function beep(freq,dur,vol){
+function beep(freq,dur,vol,when){
   try{
     var ac=getAC();if(!ac)return;
-    if(ac.state!=='running'){ac.resume();}
+    if(ac.state==='suspended'){ac.resume();}
+    var t=when||ac.currentTime;
     var o=ac.createOscillator();var g=ac.createGain();
     o.connect(g);g.connect(ac.destination);
     o.frequency.value=freq;o.type='sine';
-    g.gain.setValueAtTime(vol,ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+dur);
-    o.start(ac.currentTime);o.stop(ac.currentTime+dur);
+    g.gain.setValueAtTime(0.001,t);
+    g.gain.linearRampToValueAtTime(vol,t+0.01);
+    g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    o.start(t);o.stop(t+dur+0.05);
   }catch(e){}
 }
-function playTick(){beep(660,0.12,0.3);}
-function playTriple(offset){setTimeout(function(){beep(1000,0.5,0.9);},offset);setTimeout(function(){beep(1000,0.5,0.9);},offset+250);setTimeout(function(){beep(1200,0.6,0.9);},offset+500);}
-function playDone(){playTriple(0);playTriple(1100);playTriple(2200);showTimerNotification();}
+function playTick(){
+  var ac=getAC();if(!ac)return;
+  if(ac.state==='suspended'){ac.resume();}
+  beep(660,0.1,0.25,ac.currentTime);
+}
+function playTriple(offsetMs){
+  var ac=getAC();if(!ac)return;
+  if(ac.state==='suspended'){ac.resume();}
+  var t=ac.currentTime+offsetMs/1000;
+  beep(1000,0.4,0.8,t);
+  beep(1000,0.4,0.8,t+0.25);
+  beep(1200,0.5,0.9,t+0.5);
+}
+function playDone(){
+  var ac=getAC();
+  if(!ac||ac.state==='closed'){
+    // AC недоступен — просто показываем уведомление
+    showTimerNotification();return;
+  }
+  if(ac.state==='suspended'){
+    ac.resume().then(function(){
+      playTriple(0);playTriple(1100);playTriple(2200);
+    });
+  }else{
+    playTriple(0);playTriple(1100);playTriple(2200);
+  }
+  showTimerNotification();
+}
 function showTimerNotification(){
   try{
     if(typeof Notification==='undefined')return;
@@ -807,16 +832,25 @@ function showTimerNotification(){
     }
   }catch(e){}
 }
-var notifTimeout=null;
+
 function scheduleNotification(sec,label){
   try{
-    if(notifTimeout)clearTimeout(notifTimeout);
-    if(typeof Notification==='undefined'||Notification.permission!=='granted')return;
-    notifTimeout=setTimeout(function(){
-      new Notification('Отдых окончен! 💪',{body:label+' — время следующего подхода',tag:'workout-timer'});
-    },sec*1000);
+    // Через Service Worker — работает в фоне
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({type:'SCHEDULE_NOTIF',sec:sec,label:label});
+      return;
+    }
   }catch(e){}
 }
+
+function cancelNotification(){
+  try{
+    if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+      navigator.serviceWorker.controller.postMessage({type:'CANCEL_NOTIF'});
+    }
+  }catch(e){}
+}
+
 function requestNotifications(){
   try{
     if(typeof Notification!=='undefined'&&Notification.permission==='default'){
