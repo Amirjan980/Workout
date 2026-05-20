@@ -735,39 +735,20 @@ function resetTimer(){
   cancelNotification();
   document.getElementById('timer-btn').innerHTML='&#9654;';updateTimerDisplay();
 }
-function getAC(){
-  try{
-    if(!window._ac||window._ac.state==='closed'){
-      window._ac=new(window.AudioContext||window.webkitAudioContext)();
-    }
-    return window._ac;
-  }catch(e){return null;}
-}
 function unlockAudio(){
   try{
-    var ac=getAC();
-    if(!ac)return;
-    if(ac.state==='suspended'){
-      ac.resume();
-    }
-    // Играем беззвучный буфер чтобы разблокировать
+    var ac=new(window.AudioContext||window.webkitAudioContext)();
     var buf=ac.createBuffer(1,1,22050);
     var src=ac.createBufferSource();
     src.buffer=buf;src.connect(ac.destination);src.start(0);
+    window._ac=ac;
   }catch(e){}
 }
 document.addEventListener('touchstart',unlockAudio,{passive:true});
 document.addEventListener('click',unlockAudio);
 document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'){
-    // Пересоздаём AudioContext после блокировки экрана
-    try{
-      if(window._ac){
-        if(window._ac.state==='suspended'){window._ac.resume();}
-        else if(window._ac.state==='closed'){window._ac=new(window.AudioContext||window.webkitAudioContext)();}
-      }
-    }catch(e){}
-    // Досчитываем таймер
+    unlockAudio();
     if(timerRunning&&timerEndTime){
       var now=Date.now();
       var remaining=Math.round((timerEndTime-now)/1000);
@@ -775,7 +756,7 @@ document.addEventListener('visibilitychange',function(){
         timerSec=0;clearInterval(timerInterval);timerRunning=false;
         document.getElementById('timer-btn').innerHTML='&#9654;';
         updateTimerDisplay();
-        setTimeout(function(){playDone();},300); // небольшая задержка чтобы AC успел проснуться
+        setTimeout(function(){playDone();},500);
       } else {
         timerSec=remaining;updateTimerDisplay();
       }
@@ -784,8 +765,8 @@ document.addEventListener('visibilitychange',function(){
 });
 function beep(freq,dur,vol,when){
   try{
-    var ac=getAC();if(!ac)return;
-    if(ac.state==='suspended'){ac.resume();}
+    // Каждый раз создаём свежий контекст
+    var ac=new(window.AudioContext||window.webkitAudioContext)();
     var t=when||ac.currentTime;
     var o=ac.createOscillator();var g=ac.createGain();
     o.connect(g);g.connect(ac.destination);
@@ -794,34 +775,18 @@ function beep(freq,dur,vol,when){
     g.gain.linearRampToValueAtTime(vol,t+0.01);
     g.gain.exponentialRampToValueAtTime(0.001,t+dur);
     o.start(t);o.stop(t+dur+0.05);
+    // Закрываем после воспроизведения
+    setTimeout(function(){try{ac.close();}catch(e){}},dur*1000+200);
   }catch(e){}
 }
-function playTick(){
-  var ac=getAC();if(!ac)return;
-  if(ac.state==='suspended'){ac.resume();}
-  beep(660,0.1,0.25,ac.currentTime);
-}
+function playTick(){beep(660,0.1,0.25);}
 function playTriple(offsetMs){
-  var ac=getAC();if(!ac)return;
-  if(ac.state==='suspended'){ac.resume();}
-  var t=ac.currentTime+offsetMs/1000;
-  beep(1000,0.4,0.8,t);
-  beep(1000,0.4,0.8,t+0.25);
-  beep(1200,0.5,0.9,t+0.5);
+  setTimeout(function(){beep(1000,0.4,0.8);},offsetMs);
+  setTimeout(function(){beep(1000,0.4,0.8);},offsetMs+250);
+  setTimeout(function(){beep(1200,0.5,0.9);},offsetMs+500);
 }
 function playDone(){
-  var ac=getAC();
-  if(!ac||ac.state==='closed'){
-    // AC недоступен — просто показываем уведомление
-    showTimerNotification();return;
-  }
-  if(ac.state==='suspended'){
-    ac.resume().then(function(){
-      playTriple(0);playTriple(1100);playTriple(2200);
-    });
-  }else{
-    playTriple(0);playTriple(1100);playTriple(2200);
-  }
+  playTriple(0);playTriple(1100);playTriple(2200);
   showTimerNotification();
 }
 function showTimerNotification(){
