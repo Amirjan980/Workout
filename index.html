@@ -474,7 +474,7 @@ function saveNewExercise(){
 }
 function deleteCustomEx(dk,idx){
   var baseLen=DAYS_DATA[schedule[dk]].exercises.length;var customIdx=idx-baseLen;
-  var custom=loadCustom();if(custom[dk])custom[dk].splice(customIdx,1);saveCustom(custom);renderWorkout();
+  _customCache=null;var custom=loadCustom();if(custom[dk])custom[dk].splice(customIdx,1);saveCustom(custom);renderWorkout();
 }
 function addSet(dk,i){
   var data=loadData();if(!data[dk])data[dk]={exercises:{},completed:false};
@@ -483,7 +483,6 @@ function addSet(dk,i){
   var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);
   var prevData=prevKey?(loadData()[prevKey]||null):null;renderCard(i,dk,day,prevData);
 }
-
 function updateHeader(){
   var opts={weekday:'long',day:'numeric',month:'long'};
   document.getElementById('header-date').textContent=today.toLocaleDateString('ru-RU',opts);
@@ -758,7 +757,7 @@ function adjustWeight(dk,exIdx,setIdx,delta){
   data[dk].exercises['ex_'+exIdx].sets[setIdx].weight=next>0?String(next):'';
   saveData(data);
   // Обновляем input напрямую без полного ре-рендера
-  var inp=document.getElementById('w-'+dk+'-'+exIdx+'-'+setIdx);
+  var inp=document.querySelector('[data-wid="w-'+dk+'-'+exIdx+'-'+setIdx+'"]');
   if(inp){inp.value=next>0?next:'';}
   // Debounce полный ре-рендер для обновления сравнения
   var key=dk+'_'+exIdx;
