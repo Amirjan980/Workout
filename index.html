@@ -379,10 +379,26 @@ function buildSchedule(){
 }
 buildSchedule();
 
-function loadData(){try{return JSON.parse(localStorage.getItem('workout_data')||'{}');}catch(e){return{};}}
-function saveData(d){try{localStorage.setItem('workout_data',JSON.stringify(d));}catch(e){}}
-function loadCustom(){try{return JSON.parse(localStorage.getItem('custom_exercises')||'{}');}catch(e){return{};}}
-function saveCustom(d){try{localStorage.setItem('custom_exercises',JSON.stringify(d));}catch(e){}}
+var _dataCache=null;
+function loadData(){
+  if(_dataCache)return _dataCache;
+  try{_dataCache=JSON.parse(localStorage.getItem('workout_data')||'{}');}catch(e){_dataCache={};}
+  return _dataCache;
+}
+function saveData(d){
+  _dataCache=d;
+  try{localStorage.setItem('workout_data',JSON.stringify(d));}catch(e){}
+}
+var _customCache=null;
+function loadCustom(){
+  if(_customCache)return _customCache;
+  try{_customCache=JSON.parse(localStorage.getItem('custom_exercises')||'{}');}catch(e){_customCache={};}
+  return _customCache;
+}
+function saveCustom(d){
+  _customCache=d;
+  try{localStorage.setItem('custom_exercises',JSON.stringify(d));}catch(e){}
+}
 
 function calc1RM(w,r){if(!w||!r||r<1)return 0;if(r===1)return w;return Math.round(w*(1+r/30));}
 
@@ -567,7 +583,7 @@ function renderProgressChart(){
   function yPos(w){return padT+chartH-(w-minW)/range*chartH;}
 
   // Grid
-  ctx.strokeStyle='#f0f0f0';ctx.lineWidth=1;
+  ctx.strokeStyle=isDark?'#2c2c2e':'#f0f0f0';ctx.lineWidth=1;
   for(var g=0;g<=4;g++){var y=padT+g*(chartH/4);ctx.beginPath();ctx.moveTo(pad2,y);ctx.lineTo(W-pad2,y);ctx.stroke();}
 
   // Area
@@ -590,7 +606,7 @@ function renderProgressChart(){
     ctx.beginPath();ctx.arc(xPos(i),yPos(weights[i]),4,0,Math.PI*2);
     ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#007aff';ctx.lineWidth=2;ctx.stroke();
     // Weight label
-    ctx.fillStyle='#1c1c1e';ctx.font='bold 10px -apple-system,sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=isDark?'#ffffff':'#1c1c1e';ctx.font='bold 10px -apple-system,sans-serif';ctx.textAlign='center';
     ctx.fillText(weights[i]+'кг',xPos(i),yPos(weights[i])-8);
   }
 
@@ -629,7 +645,7 @@ function renderWorkout(){
 
   if(dayType===undefined){
     document.getElementById('workout-type').textContent='Отдых';
-    document.getElementById('workout-date-bar').style.background='#8e8e93';
+    document.getElementById('workout-date-bar').style.background=isDark?'#2c2c2e':'#8e8e93';
     document.getElementById('prev-hint').style.display='none';
     document.getElementById('ex-list').innerHTML='<div class="empty-day"><div class="emoji">😴</div><p>День отдыха.<br>Следующая тренировка скоро!</p></div>';
     document.getElementById('done-count').textContent='-';document.getElementById('total-count').textContent='-';
@@ -773,7 +789,7 @@ function saveField(dk,exIdx,setIdx,field,val){
   },600);
 }
 function saveNote(dk,exIdx,val){var data=loadData();if(!data[dk]||!data[dk].exercises||!data[dk].exercises['ex_'+exIdx])return;data[dk].exercises['ex_'+exIdx].note=val;saveData(data);}
-function toggleSetDone(dk,exIdx,setIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].sets[setIdx].done=!data[dk].exercises['ex_'+exIdx].sets[setIdx].done;saveData(data);var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);}
+function toggleSetDone(dk,exIdx,setIdx){var data=loadData();if(!data[dk]||!data[dk].exercises||!data[dk].exercises['ex_'+exIdx])return;var sets=data[dk].exercises['ex_'+exIdx].sets;if(!sets||!sets[setIdx])return;sets[setIdx].done=!sets[setIdx].done;saveData(data);var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);}
 function toggleExDone(dk,exIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].done=!data[dk].exercises['ex_'+exIdx].done;var day=getDay(dk);var allDone=true;for(var i=0;i<day.exercises.length;i++){var k='ex_'+i;if(!data[dk].exercises[k]||!data[dk].exercises[k].done){allDone=false;break;}}data[dk].completed=allDone;saveData(data);updateStats(dk,day);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);updateHeader();}
 function updateStats(dk,day){var data=loadData(),wData=data[dk]||{exercises:{}},total=day.exercises.length,doneCount=0;for(var i=0;i<total;i++){var k='ex_'+i;if(wData.exercises&&wData.exercises[k]&&wData.exercises[k].done)doneCount++;}var pct=total?Math.round(doneCount/total*100):0;document.getElementById('done-count').textContent=doneCount;document.getElementById('total-count').textContent=total;document.getElementById('pct').textContent=pct+'%';document.getElementById('progress-fill').style.width=pct+'%';}
 function startRest(sec,label){
@@ -999,8 +1015,8 @@ function importData(event){
   reader.onload=function(e){
     try{
       var data=JSON.parse(e.target.result);
-      if(data.workout_data)saveData(data.workout_data);
-      if(data.custom_exercises)saveCustom(data.custom_exercises);
+      if(data.workout_data){_dataCache=null;saveData(data.workout_data);}
+      if(data.custom_exercises){_customCache=null;saveCustom(data.custom_exercises);}
       alert('✅ Данные загружены! Тренировки восстановлены.');
       renderWorkout();
       updateHeader();
