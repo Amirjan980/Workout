@@ -689,8 +689,24 @@ function renderCard(i,dk,day,prevData){
 }
 
 function toggleCard(dk,i){openCards[dk+'_'+i]=!openCards[dk+'_'+i];var day=getDay(dk);var data=loadData();var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(i,dk,day,prevData);}
-function saveField(dk,exIdx,setIdx,field,val){var data=loadData();if(!data[dk])data[dk]={exercises:{},completed:false};data[dk].exercises['ex_'+exIdx].sets[setIdx][field]=val;saveData(data);var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(loadData()[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);}
-function saveNote(dk,exIdx,val){var data=loadData();data[dk].exercises['ex_'+exIdx].note=val;saveData(data);}
+var _saveFieldTimer={};
+function saveField(dk,exIdx,setIdx,field,val){
+  var data=loadData();
+  if(!data[dk])data[dk]={exercises:{},completed:false};
+  if(!data[dk].exercises['ex_'+exIdx])return;
+  data[dk].exercises['ex_'+exIdx].sets[setIdx][field]=val;
+  saveData(data);
+  // Debounce re-render — не перерисовываем карточку на каждый символ
+  var key=dk+'_'+exIdx;
+  if(_saveFieldTimer[key])clearTimeout(_saveFieldTimer[key]);
+  _saveFieldTimer[key]=setTimeout(function(){
+    var day=getDay(dk);
+    var prevKey=getPrevWorkoutKey(dk,schedule[dk]);
+    var prevData=prevKey?(loadData()[prevKey]||null):null;
+    renderCard(exIdx,dk,day,prevData);
+  },600);
+}
+function saveNote(dk,exIdx,val){var data=loadData();if(!data[dk]||!data[dk].exercises||!data[dk].exercises['ex_'+exIdx])return;data[dk].exercises['ex_'+exIdx].note=val;saveData(data);}
 function toggleSetDone(dk,exIdx,setIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].sets[setIdx].done=!data[dk].exercises['ex_'+exIdx].sets[setIdx].done;saveData(data);var day=getDay(dk);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);}
 function toggleExDone(dk,exIdx){var data=loadData();data[dk].exercises['ex_'+exIdx].done=!data[dk].exercises['ex_'+exIdx].done;var day=getDay(dk);var allDone=true;for(var i=0;i<day.exercises.length;i++){var k='ex_'+i;if(!data[dk].exercises[k]||!data[dk].exercises[k].done){allDone=false;break;}}data[dk].completed=allDone;saveData(data);updateStats(dk,day);var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(exIdx,dk,day,prevData);updateHeader();}
 function updateStats(dk,day){var data=loadData(),wData=data[dk]||{exercises:{}},total=day.exercises.length,doneCount=0;for(var i=0;i<total;i++){var k='ex_'+i;if(wData.exercises&&wData.exercises[k]&&wData.exercises[k].done)doneCount++;}var pct=total?Math.round(doneCount/total*100):0;document.getElementById('done-count').textContent=doneCount;document.getElementById('total-count').textContent=total;document.getElementById('pct').textContent=pct+'%';document.getElementById('progress-fill').style.width=pct+'%';}
