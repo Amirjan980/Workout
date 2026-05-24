@@ -1,4 +1,4 @@
-var CACHE_NAME = 'workout-v8';
+var CACHE_NAME = 'workout-v9';
 var urlsToCache = ['/Workout/', '/Workout/index.html'];
 
 self.addEventListener('install', function(e) {
