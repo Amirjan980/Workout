@@ -876,14 +876,38 @@ function exportData(){
   try{
     var data={workout_data:loadData(),custom_exercises:loadCustom(),exported:new Date().toISOString()};
     var json=JSON.stringify(data,null,2);
+    var filename='workout_backup_'+new Date().toISOString().slice(0,10)+'.json';
+
+    // iOS Safari PWA — используем share sheet если доступен
+    if(navigator.share){
+      var file=new File([json],filename,{type:'application/json'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:'Бэкап тренировок',text:'Резервная копия данных'})
+          .catch(function(){exportFallback(json,filename);});
+        return;
+      }
+    }
+    exportFallback(json,filename);
+  }catch(e){alert('Ошибка экспорта: '+e.message);}
+}
+
+function exportFallback(json,filename){
+  try{
     var blob=new Blob([json],{type:'application/json'});
     var url=URL.createObjectURL(blob);
     var a=document.createElement('a');
     a.href=url;
-    a.download='workout_backup_'+new Date().toISOString().slice(0,10)+'.json';
+    a.download=filename;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
-  }catch(e){alert('Ошибка экспорта: '+e.message);}
+    document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  }catch(e){
+    // Последний вариант — показать данные для копирования
+    var w=window.open('','_blank');
+    if(w){w.document.write('<pre>'+json+'</pre>');}
+    else{alert('Скопируй данные вручную:\n\n'+json);}
+  }
 }
 
 function importData(event){
