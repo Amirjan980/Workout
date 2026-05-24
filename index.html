@@ -69,7 +69,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: v
 .set-input.has-prev { border-color: #b3ccf8; }
 .set-done-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border2); background: none; cursor: pointer; margin: 0 auto; font-size: 14px; color: transparent; display: block; }
 .set-done-btn.checked { background: #34c759; border-color: #34c759; color: #fff; }
-.add-set-btn { width: 100%; padding: 8px; border: 1.5px dashed var(--border2); border-radius: 8px; background: none; color: #007aff; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+.add-set-btn { width: 100%; padding: 8px; border: 1.5px dashed var(--border2); border-radius: 8px; background: none; color: #007aff; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 8px; }
+.weight-cell { display: flex; align-items: center; gap: 3px; }
+.w-btn { width: 26px; height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg4); color: var(--blue); font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; }
+.w-btn:active { opacity: 0.5; }
+.compare-box { border-radius: 10px; padding: 9px 12px; margin-bottom: 10px; border: 1px solid var(--border); background: var(--bg4); }
+.compare-box.better { border-color: rgba(52,199,89,0.5); background: rgba(52,199,89,0.07); }
+.compare-box.worse { border-color: rgba(255,59,48,0.5); background: rgba(255,59,48,0.07); }
+.compare-title { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; font-weight: 500; }
+.compare-row { display: flex; align-items: center; gap: 8px; }
+.compare-now { font-size: 16px; font-weight: 700; color: var(--text); }
+.compare-prev { font-size: 12px; color: var(--text2); }
+.compare-delta { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: auto; }
+.compare-delta.pos { color: #34c759; background: rgba(52,199,89,0.15); }
+.compare-delta.neg { color: #ff3b30; background: rgba(255,59,48,0.15); }
+.compare-delta.zero { color: var(--text2); }
 .orm-box { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
 .orm-title { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
 .orm-value { font-size: 28px; font-weight: 700; color: #fff; }
@@ -654,6 +668,32 @@ function renderCard(i,dk,day,prevData){
   var prevLine='';
   if(prevExData){var bw=0;for(var s=0;s<prevExData.sets.length;s++)if(prevExData.sets[s].weight)bw=Math.max(bw,parseFloat(prevExData.sets[s].weight)||0);if(bw>0)prevLine='<div class="ex-prev">Прошлый раз: '+bw+' кг</div>';}
 
+  // Блок сравнения с прошлой тренировкой
+  var compareHtml='';
+  if(prevExData){
+    var prevBestW=0;
+    for(var s=0;s<prevExData.sets.length;s++){var pw=parseFloat(prevExData.sets[s].weight)||0;if(pw>prevBestW)prevBestW=pw;}
+    var curBestW=0;
+    for(var s=0;s<exData.sets.length;s++){var cw=parseFloat(exData.sets[s].weight)||0;if(cw>curBestW)curBestW=cw;}
+    if(prevBestW>0){
+      var deltaW=Math.round((curBestW-prevBestW)*10)/10;
+      var boxClass=curBestW>prevBestW?'better':curBestW>0&&curBestW<prevBestW?'worse':'';
+      var deltaClass=deltaW>0?'pos':deltaW<0?'neg':'zero';
+      var deltaStr=deltaW>0?'+'+deltaW+' кг':deltaW<0?deltaW+' кг':'= без изменений';
+      var nowStr=curBestW>0?curBestW+' кг':'—';
+      compareHtml='<div class="compare-box '+boxClass+'">'+
+        '<div class="compare-title">Сравнение с прошлой тренировкой</div>'+
+        '<div class="compare-row">'+
+          '<div>'+
+            '<div class="compare-now">'+nowStr+'</div>'+
+            '<div class="compare-prev">Прошлый раз: '+prevBestW+' кг</div>'+
+          '</div>'+
+          (curBestW>0?'<div class="compare-delta '+deltaClass+'">'+deltaStr+'</div>':'<div class="compare-delta zero">Введи вес</div>')+
+        '</div>'+
+      '</div>';
+    }
+  }
+
   card.className='ex-card'+(isDone?' done':'')+(isOpen?' open':'');
 
   var setsHtml='<table class="sets-table"><thead><tr><th>#</th><th>Вес (кг)</th><th>Повт.</th><th>&#10003;</th></tr></thead><tbody>';
@@ -661,8 +701,13 @@ function renderCard(i,dk,day,prevData){
     var set=exData.sets[s];var prevSet=prevExData&&prevExData.sets[s]?prevExData.sets[s]:null;
     var wPh=prevSet&&prevSet.weight?prevSet.weight:'-',rPh=prevSet&&prevSet.reps?prevSet.reps:ex.reps;
     var hasPrevW=prevSet&&prevSet.weight?' has-prev':'',hasPrevR=prevSet&&prevSet.reps?' has-prev':'';
+    var curW=set.weight||'';
     setsHtml+='<tr><td class="set-num">'+(s+1)+'</td>';
-    setsHtml+='<td><input class="set-input'+hasPrevW+'" type="number" inputmode="decimal" placeholder="'+wPh+'" value="'+(set.weight||'')+'" onchange="saveField(\''+dk+'\','+i+','+s+',\'weight\',this.value)" onclick="event.stopPropagation()"></td>';
+    setsHtml+='<td><div class="weight-cell">'+
+      '<button class="w-btn" onclick="event.stopPropagation();adjustWeight(\''+dk+'\','+i+','+s+',-2.5)">−</button>'+
+      '<input class="set-input'+hasPrevW+'" type="number" inputmode="decimal" placeholder="'+wPh+'" value="'+curW+'" id="w-'+dk+'-'+i+'-'+s+'" onchange="saveField(\''+dk+'\','+i+','+s+',\'weight\',this.value)" onclick="event.stopPropagation()">'+
+      '<button class="w-btn" onclick="event.stopPropagation();adjustWeight(\''+dk+'\','+i+','+s+',2.5)">+</button>'+
+    '</div></td>';
     setsHtml+='<td><input class="set-input'+hasPrevR+'" type="text" inputmode="numeric" placeholder="'+rPh+'" value="'+(set.reps||'')+'" onchange="saveField(\''+dk+'\','+i+','+s+',\'reps\',this.value)" onclick="event.stopPropagation()"></td>';
     setsHtml+='<td><button class="set-done-btn'+(set.done?' checked':'')+'" onclick="event.stopPropagation();toggleSetDone(\''+dk+'\','+i+','+s+')">&#10003;</button></td></tr>';
   }
@@ -681,13 +726,34 @@ function renderCard(i,dk,day,prevData){
       '<div class="ex-title"><div class="ex-name">'+ex.name+(isCustom?' <span style="font-size:10px;color:#8e8e93;font-weight:400">моё</span>':'')+'</div><div class="ex-meta">'+ex.sets+'x'+ex.reps+(ex.rir?' · '+ex.rir:'')+'</div>'+prevLine+'</div>'+
       '<button class="rest-btn" onclick="event.stopPropagation();startRest('+ex.restSec+',\''+ex.rest+'\')">&#9201; '+ex.rest+'</button>'+
     '</div>'+
-    '<div class="ex-body">'+setsHtml+ormHtml+
+    '<div class="ex-body">'+compareHtml+setsHtml+ormHtml+
       '<div class="note-label" style="margin-top:8px">Заметка</div>'+
       '<textarea class="add-note" rows="2" placeholder="Комментарий..." onclick="event.stopPropagation()" onchange="saveNote(\''+dk+'\','+i+',this.value)">'+(exData.note||'')+'</textarea>'+
       '<div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">'+deleteBtn+
       '<button class="done-btn" onclick="event.stopPropagation();toggleExDone(\''+dk+'\','+i+')" style="background:'+(isDone?'#ff3b30':'#34c759')+'">'+(isDone?'Снять отметку':'Готово')+'</button></div></div>';
 }
 
+function adjustWeight(dk,exIdx,setIdx,delta){
+  var data=loadData();
+  if(!data[dk]||!data[dk].exercises||!data[dk].exercises['ex_'+exIdx])return;
+  var cur=parseFloat(data[dk].exercises['ex_'+exIdx].sets[setIdx].weight)||0;
+  var next=Math.round((cur+delta)*10)/10;
+  if(next<0)next=0;
+  data[dk].exercises['ex_'+exIdx].sets[setIdx].weight=next>0?String(next):'';
+  saveData(data);
+  // Обновляем input напрямую без полного ре-рендера
+  var inp=document.getElementById('w-'+dk+'-'+exIdx+'-'+setIdx);
+  if(inp){inp.value=next>0?next:'';}
+  // Debounce полный ре-рендер для обновления сравнения
+  var key=dk+'_'+exIdx;
+  if(_saveFieldTimer[key])clearTimeout(_saveFieldTimer[key]);
+  _saveFieldTimer[key]=setTimeout(function(){
+    var day=getDay(dk);
+    var prevKey=getPrevWorkoutKey(dk,schedule[dk]);
+    var prevData=prevKey?(loadData()[prevKey]||null):null;
+    renderCard(exIdx,dk,day,prevData);
+  },400);
+}
 function toggleCard(dk,i){openCards[dk+'_'+i]=!openCards[dk+'_'+i];var day=getDay(dk);var data=loadData();var prevKey=getPrevWorkoutKey(dk,schedule[dk]);var prevData=prevKey?(data[prevKey]||null):null;renderCard(i,dk,day,prevData);}
 var _saveFieldTimer={};
 function saveField(dk,exIdx,setIdx,field,val){
